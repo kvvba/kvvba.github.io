@@ -1,3 +1,3 @@
-#+TITLE: Blog Posts
+#+TITLE: Blog posts
 
-- {{{timestamp(2023-12-16)}}} [[file:test.org][testing]]
+- {{{timestamp(2023-12-16)}}} [[file:gmsh-openfoam.org][mesh generation with gmsh for openfoam]]

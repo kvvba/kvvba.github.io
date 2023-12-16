@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-12-16 Sat 21:48 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mesh generation with Gmsh for OpenFOAM</title>
+<meta name="author" content="jakub" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Mesh generation with Gmsh for OpenFOAM</h1>
+<div id="outline-container-org222f24a" class="outline-2">
+<h2 id="org222f24a">Motivation</h2>
+<div class="outline-text-2" id="text-org222f24a">
+<p>
+The <code>blockMesh</code> meshing utility included in OpenFOAM is an acceptable tool for very simple meshes, but it can become a severe limitation on us when faced with more complex geometries. The ever more confusing doodles mapping out your vertices pile up. The effort taken to continue in our old ways rapidly surpasses the effort of learning something new, and we find ourselves looking for other options.
+</p>
+
+<p>
+Gmsh is a free (as in freedom) meshing software, which can generate both structured and unstructured meshes. It is more intuitive than <code>blockMesh</code>, and in many applications more powerful than non-free offerings such as Pointwise (in parametrization, for example).
+</p>
+
+<p>
+Domains are, broadly, built up in this way:
+</p>
+<ol class="org-ol">
+<li>Defining coordinates of points</li>
+<li>Constructing lines between points</li>
+<li>Defining 'loops' of lines</li>
+<li>Creating surfaces from loops</li>
+<li>Creating volumes from surfaces</li>
+</ol>
+
+<p>
+Though intended for FEM modelling, we're able to construct meshes to use with FVM OpenFOAM solvers. The primary method of interacting with Gmsh is by editing your .geo file with your <a href="https://www.gnu.org/software/emacs/">favourite text editor</a>, but a graphical interface is included to view the details of your mesh. Interactive meshing is also possible, with every command available to you from the menu and your changes written to your file. I would recommend the <a href="https://www.youtube.com/watch?v=aFc6Wpm69xo&amp;list=PLvkU6i2iQ2frFlpCPgXQO8ReyhNxmwpn_">tutorial series</a> by Cyprien Rusu to get started.
+</p>
+
+<p>
+There is, however, a catch. There is a little work we must do between generating our mesh and running our OpenFOAM simulation. Fortunately, we can automate the process with a simple bash script, once we know what to do.
+</p>
+</div>
+</div>
+<div id="outline-container-org4683c0d" class="outline-2">
+<h2 id="org4683c0d">Mesh generation</h2>
+<div class="outline-text-2" id="text-org4683c0d">
+<p>
+The script we need is very short:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #c0a38a; font-style: italic;">#</span><span style="color: #c0a38a; font-style: italic;">!/bin/</span><span style="color: #af85ea; font-weight: bold;">bash</span>
+rm -r constant/polyMesh/ constant/*/polyMesh
+gmsh my_mesh.geo -3
+gmshToFoam my_mesh.msh
+changeDictionary
+rm -r constant/polyMesh/*Zones
+rm -r constant/polyMesh/sets
+</pre>
+</div>
+
+<p>
+Let's go over this line by line.
+</p>
+
+<p>
+Here we begin by deleting any existing mesh, accounting for multi region meshes:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">rm -r constant/polyMesh/ constant/*/polyMesh
+</pre>
+</div>
+
+<p>
+We generate a <code>.msh</code> mesh file using <code>gmsh</code> in the command line, using the <code>-3</code> flag to tell it we wish to generate a three dimensional mesh. By default, it will be saved with the same name as your <code>.geo</code> file. You can change this behaviour with the <code>-o</code> flag.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">gmsh my_mesh.geo -3
+</pre>
+</div>
+
+<p>
+We can then pass our <code>.msh</code> file to the <code>gmshToFoam</code> tool built into OpenFOAM to get our <code>polyMesh</code>:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">gmshToFoam my_mesh.msh
+</pre>
+</div>
+
+<p>
+By default, every boundary will be of type '<code>patch</code>'. If we want to change this, we can do it automatically using the <code>changeDictionary</code> command, for which we must define a <code>changeDictionaryDict</code> in the <code>system</code> directory. I will describe this in the next section.
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">changeDictionary
+</pre>
+</div>
+
+<p>
+The <code>gmshToFoam</code> command leaves behind some thing we don't want, which can cause simulations to crash. We can easily remove them:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">rm -r constant/polyMesh/*Zones
+rm -r constant/polyMesh/sets
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org31a2223" class="outline-2">
+<h2 id="org31a2223">Using <code>changeDictionary</code></h2>
+<div class="outline-text-2" id="text-org31a2223">
+<p>
+As mentioned in the previous section, <code>gmshToFoam</code> will assume every boundary is a patch. To save ourselves manually editing our <code>polyMesh</code> every time we generate a mesh, we can use <code>changeDictionary</code>. This requires us to specify what to change in <code>system/changeDictionaryDict</code>, which will look something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++"><span style="color: #c0a38a; font-style: italic;">//  </span><span style="color: #c0a38a; font-style: italic;">=========                 |  -*- OpenFOAM -*-</span>
+<span style="color: #c0a38a; font-style: italic;">//  </span><span style="color: #c0a38a; font-style: italic;">\\      /  F ield         |</span>
+<span style="color: #c0a38a; font-style: italic;">//   </span><span style="color: #c0a38a; font-style: italic;">\\    /   O peration     |</span>
+<span style="color: #c0a38a; font-style: italic;">//    </span><span style="color: #c0a38a; font-style: italic;">\\  /    A nd           |</span>
+<span style="color: #c0a38a; font-style: italic;">//     </span><span style="color: #c0a38a; font-style: italic;">\\/     M anipulation  |</span>
+<span style="color: #c0a38a; font-style: italic;">//</span>
+<span style="color: #c0a38a; font-style: italic;">// </span><span style="color: #c0a38a; font-style: italic;">Copyright (C) 2023 jakub</span>
+<span style="color: #c0a38a; font-style: italic;">//</span>
+<span style="color: #c0a38a; font-style: italic;">// </span><span style="color: #c0a38a; font-style: italic;">Author: jakub</span>
+
+<span style="color: #c0a38a; font-style: italic;">/// </span><span style="color: #c0a38a; font-style: italic;">Code:</span>
+
+FoamFile
+<span style="color: #d369af;">{</span>
+    version 2.0;
+    <span style="color: #4fbaef;">format</span> <span style="color: #6a9fff;">ascii</span>;
+    <span style="color: #af85ea; font-weight: bold;">class</span> <span style="color: #4fbaef;">dictionary</span>;
+    <span style="color: #4fbaef;">object</span> <span style="color: #6a9fff;">changeDictionaryDict</span>;
+<span style="color: #d369af;">}</span>
+
+boundary
+<span style="color: #d369af;">{</span>
+    upstream
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">patch</span>;
+    <span style="color: #35afbf;">}</span>
+    downstream
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">patch</span>;
+    <span style="color: #35afbf;">}</span>
+    top
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">wall</span>;
+    <span style="color: #35afbf;">}</span>
+    bottom
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">wall</span>;
+    <span style="color: #35afbf;">}</span>
+    front
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">symmetryPlane</span>;
+    <span style="color: #35afbf;">}</span>
+    back
+    <span style="color: #35afbf;">{</span>
+        <span style="color: #4fbaef;">type</span> <span style="color: #6a9fff;">wall</span>;
+    <span style="color: #35afbf;">}</span>
+<span style="color: #d369af;">}</span>
+
+<span style="color: #c0a38a; font-style: italic;">/// </span><span style="color: #c0a38a; font-style: italic;">changeDictionaryDict ends here</span>
+</pre>
+</div>
+
+<p>
+Here we have 6 boundaries: <code>upstream, downstream, top, bottom, front, back</code>. These must be named consistently with your Gmsh 'physical surfaces'. In my example, <code>upstream</code> and <code>downstream</code> remain as patches for illustrative purposes, while we change <code>top</code>, <code>bottom</code>, and <code>back</code> into walls, and <code>front</code> into a symmetry plane. The <code>changeDictionary</code> command has many uses besides changing patch types, and so we must specify here that we want to change the <code>boundary</code> dictionary.
+</p>
+</div>
+</div>
+<div id="outline-container-orga23a09e" class="outline-2">
+<h2 id="orga23a09e">Useful resources</h2>
+<div class="outline-text-2" id="text-orga23a09e">
+</div>
+<div id="outline-container-org711b390" class="outline-3">
+<h3 id="org711b390">Downloads</h3>
+<div class="outline-text-3" id="text-org711b390">
+<ul class="org-ul">
+<li><a href="https://gmsh.info">Gmsh download</a></li>
+<li><a href="https://www.openfoam.com">Openfoam download</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgf2e1504" class="outline-3">
+<h3 id="orgf2e1504">Documentation</h3>
+<div class="outline-text-3" id="text-orgf2e1504">
+<ul class="org-ul">
+<li><a href="https://gmsh.info/doc/texinfo/gmsh.html">Gmsh documentation</a></li>
+<li><a href="https://wiki.openfoam.com/Main_Page">Openfoam wiki</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: jakub</p>
+<p class="date">Created: 2023-12-16 Sat 21:48</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

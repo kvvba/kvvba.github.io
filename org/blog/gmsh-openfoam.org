@@ -1,0 +1,124 @@
+#+TITLE: Mesh generation with Gmsh for OpenFOAM
+#+options: toc:nil num:nil
+
+* Motivation
+The ~blockMesh~ meshing utility included in OpenFOAM is an acceptable tool for very simple meshes, but it can become a severe limitation on us when faced with more complex geometries. The ever more confusing doodles mapping out your vertices pile up. The effort taken to continue in our old ways rapidly surpasses the effort of learning something new, and we find ourselves looking for other options.
+
+Gmsh is a free (as in freedom) meshing software, which can generate both structured and unstructured meshes. It is more intuitive than ~blockMesh~, and in many applications more powerful than non-free offerings such as Pointwise (in parametrization, for example).
+
+Domains are, broadly, built up in this way:
+1. Defining coordinates of points
+2. Constructing lines between points
+3. Defining 'loops' of lines
+4. Creating surfaces from loops
+5. Creating volumes from surfaces
+
+Though intended for FEM modelling, we're able to construct meshes to use with FVM OpenFOAM solvers. The primary method of interacting with Gmsh is by editing your .geo file with your [[https://www.gnu.org/software/emacs/][favourite text editor]], but a graphical interface is included to view the details of your mesh. Interactive meshing is also possible, with every command available to you from the menu and your changes written to your file. I would recommend the [[https://www.youtube.com/watch?v=aFc6Wpm69xo&list=PLvkU6i2iQ2frFlpCPgXQO8ReyhNxmwpn_][tutorial series]] by Cyprien Rusu to get started.
+
+There is, however, a catch. There is a little work we must do between generating our mesh and running our OpenFOAM simulation. Fortunately, we can automate the process with a simple bash script, once we know what to do.
+
+* Mesh generation
+The script we need is very short:
+#+begin_src bash
+  #!/bin/bash
+  rm -r constant/polyMesh/ constant/*/polyMesh
+  gmsh my_mesh.geo -3
+  gmshToFoam my_mesh.msh
+  changeDictionary
+  rm -r constant/polyMesh/*Zones
+  rm -r constant/polyMesh/sets
+#+end_src
+
+Let's go over this line by line.
+
+Here we begin by deleting any existing mesh, accounting for multi region meshes:
+#+begin_src bash
+  rm -r constant/polyMesh/ constant/*/polyMesh
+#+end_src
+
+We generate a ~.msh~ mesh file using ~gmsh~ in the command line, using the ~-3~ flag to tell it we wish to generate a three dimensional mesh. By default, it will be saved with the same name as your ~.geo~ file. You can change this behaviour with the ~-o~ flag.
+#+begin_src bash
+  gmsh my_mesh.geo -3
+#+end_src
+
+We can then pass our ~.msh~ file to the ~gmshToFoam~ tool built into OpenFOAM to get our ~polyMesh~:
+#+begin_src bash
+  gmshToFoam my_mesh.msh
+#+end_src
+
+By default, every boundary will be of type '~patch~'. If we want to change this, we can do it automatically using the ~changeDictionary~ command, for which we must define a ~changeDictionaryDict~ in the ~system~ directory. I will describe this in the next section.
+#+begin_src bash
+  changeDictionary
+#+end_src
+
+The ~gmshToFoam~ command leaves behind some thing we don't want, which can cause simulations to crash. We can easily remove them:
+#+begin_src bash
+  rm -r constant/polyMesh/*Zones
+  rm -r constant/polyMesh/sets
+#+end_src
+
+* Using ~changeDictionary~
+As mentioned in the previous section, ~gmshToFoam~ will assume every boundary is a patch. To save ourselves manually editing our ~polyMesh~ every time we generate a mesh, we can use ~changeDictionary~. This requires us to specify what to change in ~system/changeDictionaryDict~, which will look something like this:
+
+#+begin_src C++
+//  =========                 |  -*- OpenFOAM -*-
+//  \\      /  F ield         |
+//   \\    /   O peration     |
+//    \\  /    A nd           |
+//     \\/     M anipulation  |
+//
+// Copyright (C) 2023 jakub
+//
+// Author: jakub
+
+/// Code:
+
+FoamFile
+{
+    version 2.0;
+    format ascii;
+    class dictionary;
+    object changeDictionaryDict;
+}
+
+boundary
+{
+    upstream
+    {
+        type patch;
+    }
+    downstream
+    {
+        type patch;
+    }
+    top
+    {
+        type wall;
+    }
+    bottom
+    {
+        type wall;
+    }
+    front
+    {
+        type symmetryPlane;
+    }
+    back
+    {
+        type wall;
+    }
+}
+
+/// changeDictionaryDict ends here
+#+end_src
+
+Here we have 6 boundaries: ~upstream, downstream, top, bottom, front, back~. These must be named consistently with your Gmsh 'physical surfaces'. In my example, ~upstream~ and ~downstream~ remain as patches for illustrative purposes, while we change ~top~, ~bottom~, and ~back~ into walls, and ~front~ into a symmetry plane. The ~changeDictionary~ command has many uses besides changing patch types, and so we must specify here that we want to change the ~boundary~ dictionary.
+
+* Useful resources
+** Downloads
+- [[https://gmsh.info][Gmsh download]]
+- [[https://www.openfoam.com][Openfoam download]]
+
+** Documentation
+- [[https://gmsh.info/doc/texinfo/gmsh.html][Gmsh documentation]]
+- [[https://wiki.openfoam.com/Main_Page][Openfoam wiki]]
