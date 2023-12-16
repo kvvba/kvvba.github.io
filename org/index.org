@@ -1,0 +1,10 @@
+#+title: kvvba.github.io
+#+options: toc:nil num:nil
+* about
+i love thermal hydraulics and direct numerical simulation
+* posts
+#+HTML: <div class="blog-entries">
+#+INCLUDE: "blog/index.org" :lines "3-"
+#+HTML: </div>
+* links
+- [[https://github.com/kvvba][my github]]
