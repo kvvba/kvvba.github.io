@@ -1,6 +1,8 @@
 #+TITLE: Mesh generation with Gmsh for OpenFOAM
 #+options: toc:nil num:nil
 
+[[[../index.org][return]]]
+
 * Motivation
 The ~blockMesh~ meshing utility included in OpenFOAM is an acceptable tool for very simple meshes, but it can become a severe limitation on us when faced with more complex geometries. The ever more confusing doodles mapping out your vertices pile up. The effort taken to continue in our old ways rapidly surpasses the effort of learning something new, and we find ourselves looking for other options.
 
