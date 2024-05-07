@@ -6,7 +6,7 @@
 <!-- 2024-05-07 Tue 20:06 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Blog posts</title>
+<title>Forcing a fixed value in a cell</title>
 <meta name="author" content="jakub" />
 <meta name="generator" content="Org Mode" />
 <style type="text/css">
@@ -196,10 +196,51 @@
 </head>
 <body>
 <div id="content" class="content">
-<h1 class="title">Blog posts</h1>
-<ul class="org-ul">
-<li><span class="timestamp">[2023-12-16]</span> <a href="gmsh-openfoam.html">mesh generation with gmsh for openfoam</a></li>
-</ul>
+<h1 class="title">Forcing a fixed value in a cell</h1>
+<p>
+[<a href="../index.html">return</a>]
+</p>
+<div id="outline-container-orgdd2feea" class="outline-2">
+<h2 id="orgdd2feea">Motivation</h2>
+<div class="outline-text-2" id="text-orgdd2feea">
+<p>
+There are many possible scenarios in computational fluids, in which you may wish to enforce a known value of a variable in a cell. OpenFOAM users may be familiar with the setReference method, used primarily in solvers to set a reference pressure within a domain. This approach works relatively well in most scenarios, but notably will not hold for a non-zero gradient. Enforcing a temperature distribution in part of the domain, for example, is impossible with this approach. We must return to an older approach.
+</p>
+</div>
+</div>
+<div id="outline-container-org920cba6" class="outline-2">
+<h2 id="org920cba6">Forcing cell values</h2>
+<div class="outline-text-2" id="text-org920cba6">
+<p>
+Suppose we want to force a value for some scalar ϕ. Its transport equation is discretised as
+a<sub>P</sub> ϕ<sub>P</sub> - ∑<sub>N</sub> a<sub>N</sub> ϕ<sub>N</sub> = SΔx
+Where P and N are the diagonal and off-diagonal elements of the discretisation matrix, and S is a source term.
+The source term can be split into explicit (S<sub>u</sub>) and implicit (S<sub>P</sub>) components.
+S = S<sub>u</sub> + ϕ<sub>P</sub> S<sub>p</sub>
+</p>
+
+<p>
+We can impose our desired value of ϕ by setting S<sub>u</sub> and S<sub>p</sub> for the desired cell.
+S<sub>u</sub> = 10<sup>30</sup> ϕ<sub>P,desired</sub>
+S<sub>P</sub> = -10<sup>30</sup>
+Here the purpose of 10<sup>30</sup> is to make the other terms in the discretised equation negligible.
+S<sub>u</sub> + S<sub>P</sub> ϕ<sub>P</sub> ≈ 0
+ϕ<sub>P</sub> = -S<sub>u</sub>/S<sub>p</sub> = ϕ<sub>P,desired</sub>
+</p>
+
+<p>
+Et voilà, we can define known values at internal points in our domain.
+</p>
+</div>
+</div>
+<div id="outline-container-orgbcfeaca" class="outline-2">
+<h2 id="orgbcfeaca">Further reading</h2>
+<div class="outline-text-2" id="text-orgbcfeaca">
+<p>
+Patankar S. Numerical heat transfer and fluid flow. CRC press; 2018 Oct 8.
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
