@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-05-07 Tue 20:20 -->
+<!-- 2024-05-07 Tue 20:22 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Forcing known values at internal cells</title>
@@ -198,11 +198,80 @@
 <div id="content" class="content">
 <h1 class="title">Forcing known values at internal cells</h1>
 <p>
-TITLE</p>
+[<a href="../index.html">return</a>]
+</p>
+<div id="outline-container-orgbd6d1d3" class="outline-2">
+<h2 id="orgbd6d1d3">Motivation</h2>
+<div class="outline-text-2" id="text-orgbd6d1d3">
+<p>
+There are many possible scenarios in computational fluids, in which you may wish to enforce a known value of a variable in a cell. OpenFOAM users may be familiar with the setReference method, used primarily in solvers to set a reference pressure within a domain. This approach works relatively well in most scenarios, but notably will not hold for a non-zero gradient. Enforcing a temperature distribution in part of the domain, for example, is impossible with this approach. We must return to an older approach.
+</p>
+</div>
+</div>
+<div id="outline-container-org484b355" class="outline-2">
+<h2 id="org484b355">Forcing cell values</h2>
+<div class="outline-text-2" id="text-org484b355">
+<p>
+Suppose we want to force a value for some scalar ϕ. Its transport equation is discretised as
+</p>
+
+<p>
+a<sub>P</sub> ϕ<sub>P</sub> - ∑<sub>N</sub> a<sub>N</sub> ϕ<sub>N</sub> = SΔx
+</p>
+
+<p>
+Where P and N are the diagonal and off-diagonal elements of the discretisation matrix, and S is a source term.
+</p>
+
+<p>
+The source term can be split into explicit (S<sub>u</sub>) and implicit (S<sub>P</sub>) components.
+</p>
+
+<p>
+S = S<sub>u</sub> + ϕ<sub>P</sub> S<sub>p</sub>
+</p>
+
+<p>
+We can impose our desired value of ϕ by setting S<sub>u</sub> and S<sub>p</sub> for the desired cell.
+</p>
+
+<p>
+S<sub>u</sub> = 10<sup>30</sup> ϕ<sub>P,desired</sub>
+</p>
+
+<p>
+S<sub>P</sub> = -10<sup>30</sup>
+</p>
+
+<p>
+Here the purpose of 10<sup>30</sup> is to make the other terms in the discretised equation negligible.
+</p>
+
+<p>
+S<sub>u</sub> + S<sub>P</sub> ϕ<sub>P</sub> ≈ 0
+</p>
+
+<p>
+ϕ<sub>P</sub> = -S<sub>u</sub>/S<sub>p</sub> = ϕ<sub>P,desired</sub>
+</p>
+
+<p>
+Et voilà, we can define known values at internal points in our domain.
+</p>
+</div>
+</div>
+<div id="outline-container-orgc7b9a8e" class="outline-2">
+<h2 id="orgc7b9a8e">Further reading</h2>
+<div class="outline-text-2" id="text-orgc7b9a8e">
+<p>
+Patankar S. Numerical heat transfer and fluid flow. CRC press; 2018 Oct 8.
+</p>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
-<p class="date">Created: 2024-05-07 Tue 20:20</p>
+<p class="date">Created: 2024-05-07 Tue 20:22</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
