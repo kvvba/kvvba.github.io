@@ -1,4 +1,4 @@
-#+title: Mesh generation with Gmsh for OpenFOAM
+#+TITLE: Mesh generation with Gmsh for OpenFOAM
 #+options: toc:nil num:nil
 
 [[[../index.org][return]]]
