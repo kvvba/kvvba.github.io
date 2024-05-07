@@ -8,16 +8,25 @@ There are many possible scenarios in computational fluids, in which you may wish
 
 * Forcing cell values
 Suppose we want to force a value for some scalar ϕ. Its transport equation is discretised as
+
 a_P ϕ_P - ∑_N a_N ϕ_N = SΔx
+
 Where P and N are the diagonal and off-diagonal elements of the discretisation matrix, and S is a source term.
+
 The source term can be split into explicit (S_u) and implicit (S_P) components.
+
 S = S_u + ϕ_P S_p
 
 We can impose our desired value of ϕ by setting S_u and S_p for the desired cell.
+
 S_u = 10^30 ϕ_P,desired
+
 S_P = -10^30
+
 Here the purpose of 10^30 is to make the other terms in the discretised equation negligible.
+
 S_u + S_P ϕ_P ≈ 0
+
 ϕ_P = -S_u/S_p = ϕ_P,desired
 
 Et voilà, we can define known values at internal points in our domain.
