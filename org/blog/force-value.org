@@ -1,4 +1,4 @@
-#+TITLE: Forcing a fixed value in a cell
+#+TITLE: Forcing known values at internal cells
 #+options: toc:nil num:nil
 
 [[[../index.org][return]]]
