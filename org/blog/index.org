@@ -1,4 +1,4 @@
 #+TITLE: Blog posts
 
-- {{{timestamp(2024-05-07)}}} [[file:force-value.org][Forcing a fixed value in a cell]]
-- {{{timestamp(2023-12-16)}}} [[file:gmsh-openfoam.org][mesh generation with gmsh for openfoam]]
+- {{{timestamp(2024-05-07)}}} [[file:gmsh-openfoam.org][Mesh generation with Gmsh for OpenFOAM]]
+- {{{timestamp(2024-05-07)}}} [[file:force-value.org][Forcing known values at internal cells]]

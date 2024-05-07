@@ -3,13 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-12-18 Mon 11:21 -->
+<!-- 2024-05-07 Tue 20:14 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mesh generation with Gmsh for OpenFOAM</title>
 <meta name="author" content="jakub" />
 <meta name="generator" content="Org Mode" />
-<style>
+<style type="text/css">
   #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
@@ -198,194 +198,11 @@
 <div id="content" class="content">
 <h1 class="title">Mesh generation with Gmsh for OpenFOAM</h1>
 <p>
-[<a href="../index.html">return</a>]
-</p>
-<div id="outline-container-org222f24a" class="outline-2">
-<h2 id="org222f24a">Motivation</h2>
-<div class="outline-text-2" id="text-org222f24a">
-<p>
-The <code>blockMesh</code> meshing utility included in OpenFOAM is an acceptable tool for very simple meshes, but it can become a severe limitation on us when faced with more complex geometries. The ever more confusing doodles mapping out your vertices pile up. The effort taken to continue in our old ways rapidly surpasses the effort of learning something new, and we find ourselves looking for other options.
-</p>
-
-<p>
-Gmsh is a free (as in freedom) meshing software, which can generate both structured and unstructured meshes. It is more intuitive than <code>blockMesh</code>, and in many applications more powerful than non-free offerings such as Pointwise (in parametrization, for example).
-</p>
-
-<p>
-Domains are, broadly, built up in this way:
-</p>
-<ol class="org-ol">
-<li>Defining coordinates of points</li>
-<li>Constructing lines between points</li>
-<li>Defining 'loops' of lines</li>
-<li>Creating surfaces from loops</li>
-<li>Creating volumes from surfaces</li>
-</ol>
-
-<p>
-Though intended for FEM modelling, we're able to construct meshes to use with FVM OpenFOAM solvers. The primary method of interacting with Gmsh is by editing your .geo file with your <a href="https://www.gnu.org/software/emacs/">favourite text editor</a>, but a graphical interface is included to view the details of your mesh. Interactive meshing is also possible, with every command available to you from the menu and your changes written to your file. I would recommend the <a href="https://www.youtube.com/watch?v=aFc6Wpm69xo&amp;list=PLvkU6i2iQ2frFlpCPgXQO8ReyhNxmwpn_">tutorial series</a> by Cyprien Rusu to get started.
-</p>
-
-<p>
-There is, however, a catch. There is a little work we must do between generating our mesh and running our OpenFOAM simulation. Fortunately, we can automate the process with a simple bash script, once we know what to do.
-</p>
-</div>
-</div>
-<div id="outline-container-org4683c0d" class="outline-2">
-<h2 id="org4683c0d">Mesh generation</h2>
-<div class="outline-text-2" id="text-org4683c0d">
-<p>
-The script we need is very short:
-</p>
-<div class="org-src-container">
-<pre class="src src-bash"><span style="color: #804f4f; font-style: italic;">#</span><span style="color: #804f4f; font-style: italic;">!/bin/</span><span style="color: #004fc0; font-weight: bold;">bash</span>
-rm -r constant/polyMesh/ constant/*/polyMesh
-gmsh my_mesh.geo -3
-gmshToFoam my_mesh.msh
-changeDictionary
-rm -r constant/polyMesh/*Zones
-rm -r constant/polyMesh/sets
-</pre>
-</div>
-
-<p>
-Let's go over this line by line.
-</p>
-
-<p>
-Here we begin by deleting any existing mesh, accounting for multi region meshes:
-</p>
-<div class="org-src-container">
-<pre class="src src-bash">rm -r constant/polyMesh/ constant/*/polyMesh
-</pre>
-</div>
-
-<p>
-We generate a <code>.msh</code> mesh file using <code>gmsh</code> in the command line, using the <code>-3</code> flag to tell it we wish to generate a three dimensional mesh. By default, it will be saved with the same name as your <code>.geo</code> file. You can change this behaviour with the <code>-o</code> flag.
-</p>
-<div class="org-src-container">
-<pre class="src src-bash">gmsh my_mesh.geo -3
-</pre>
-</div>
-
-<p>
-We can then pass our <code>.msh</code> file to the <code>gmshToFoam</code> tool built into OpenFOAM to get our <code>polyMesh</code>:
-</p>
-<div class="org-src-container">
-<pre class="src src-bash">gmshToFoam my_mesh.msh
-</pre>
-</div>
-
-<p>
-By default, every boundary will be of type '<code>patch</code>'. If we want to change this, we can do it automatically using the <code>changeDictionary</code> command, for which we must define a <code>changeDictionaryDict</code> in the <code>system</code> directory. I will describe this in the next section.
-</p>
-<div class="org-src-container">
-<pre class="src src-bash">changeDictionary
-</pre>
-</div>
-
-<p>
-The <code>gmshToFoam</code> command leaves behind some thing we don't want, which can cause simulations to crash. We can easily remove them:
-</p>
-<div class="org-src-container">
-<pre class="src src-bash">rm -r constant/polyMesh/*Zones
-rm -r constant/polyMesh/sets
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-org31a2223" class="outline-2">
-<h2 id="org31a2223">Using <code>changeDictionary</code></h2>
-<div class="outline-text-2" id="text-org31a2223">
-<p>
-As mentioned in the previous section, <code>gmshToFoam</code> will assume every boundary is a patch. To save ourselves manually editing our <code>polyMesh</code> every time we generate a mesh, we can use <code>changeDictionary</code>. This requires us to specify what to change in <code>system/changeDictionaryDict</code>, which will look something like this:
-</p>
-
-<div class="org-src-container">
-<pre class="src src-C++"><span style="color: #804f4f; font-style: italic;">//  </span><span style="color: #804f4f; font-style: italic;">=========                 |  -*- OpenFOAM -*-</span>
-<span style="color: #804f4f; font-style: italic;">//  </span><span style="color: #804f4f; font-style: italic;">\\      /  F ield         |</span>
-<span style="color: #804f4f; font-style: italic;">//   </span><span style="color: #804f4f; font-style: italic;">\\    /   O peration     |</span>
-<span style="color: #804f4f; font-style: italic;">//    </span><span style="color: #804f4f; font-style: italic;">\\  /    A nd           |</span>
-<span style="color: #804f4f; font-style: italic;">//     </span><span style="color: #804f4f; font-style: italic;">\\/     M anipulation  |</span>
-<span style="color: #804f4f; font-style: italic;">//</span>
-<span style="color: #804f4f; font-style: italic;">// </span><span style="color: #804f4f; font-style: italic;">Copyright (C) 2023 jakub</span>
-<span style="color: #804f4f; font-style: italic;">//</span>
-<span style="color: #804f4f; font-style: italic;">// </span><span style="color: #804f4f; font-style: italic;">Author: jakub</span>
-
-<span style="color: #804f4f; font-style: italic;">/// </span><span style="color: #804f4f; font-style: italic;">Code:</span>
-
-FoamFile
-<span style="color: #007a85;">{</span>
-    version 2.0;
-    <span style="color: #7f5ae0;">format</span> <span style="color: #3a6dd2;">ascii</span>;
-    <span style="color: #004fc0; font-weight: bold;">class</span> <span style="color: #7f5ae0;">dictionary</span>;
-    <span style="color: #7f5ae0;">object</span> <span style="color: #3a6dd2;">changeDictionaryDict</span>;
-<span style="color: #007a85;">}</span>
-
-boundary
-<span style="color: #007a85;">{</span>
-    upstream
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">patch</span>;
-    <span style="color: #004fc0;">}</span>
-    downstream
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">patch</span>;
-    <span style="color: #004fc0;">}</span>
-    top
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">wall</span>;
-    <span style="color: #004fc0;">}</span>
-    bottom
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">wall</span>;
-    <span style="color: #004fc0;">}</span>
-    front
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">symmetryPlane</span>;
-    <span style="color: #004fc0;">}</span>
-    back
-    <span style="color: #004fc0;">{</span>
-        <span style="color: #7f5ae0;">type</span> <span style="color: #3a6dd2;">wall</span>;
-    <span style="color: #004fc0;">}</span>
-<span style="color: #007a85;">}</span>
-
-<span style="color: #804f4f; font-style: italic;">/// </span><span style="color: #804f4f; font-style: italic;">changeDictionaryDict ends here</span>
-</pre>
-</div>
-
-<p>
-Here we have 6 boundaries: <code>upstream, downstream, top, bottom, front, back</code>. These must be named consistently with your Gmsh 'physical surfaces'. In my example, <code>upstream</code> and <code>downstream</code> remain as patches for illustrative purposes, while we change <code>top</code>, <code>bottom</code>, and <code>back</code> into walls, and <code>front</code> into a symmetry plane. The <code>changeDictionary</code> command has many uses besides changing patch types, and so we must specify here that we want to change the <code>boundary</code> dictionary.
-</p>
-</div>
-</div>
-<div id="outline-container-orga23a09e" class="outline-2">
-<h2 id="orga23a09e">Useful resources</h2>
-<div class="outline-text-2" id="text-orga23a09e">
-</div>
-<div id="outline-container-org711b390" class="outline-3">
-<h3 id="org711b390">Downloads</h3>
-<div class="outline-text-3" id="text-org711b390">
-<ul class="org-ul">
-<li><a href="https://gmsh.info">Gmsh download</a></li>
-<li><a href="https://www.openfoam.com">Openfoam download</a></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orgf2e1504" class="outline-3">
-<h3 id="orgf2e1504">Documentation</h3>
-<div class="outline-text-3" id="text-orgf2e1504">
-<ul class="org-ul">
-<li><a href="https://gmsh.info/doc/texinfo/gmsh.html">Gmsh documentation</a></li>
-<li><a href="https://wiki.openfoam.com/Main_Page">Openfoam wiki</a></li>
-</ul>
-</div>
-</div>
-</div>
+title</p>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
-<p class="date">Created: 2023-12-18 Mon 11:21</p>
+<p class="date">Created: 2024-05-07 Tue 20:14</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
