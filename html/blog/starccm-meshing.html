@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2025-11-22 Sat 16:10 -->
+<!-- 2025-11-22 Sat 16:16 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Structured meshing in STAR-CCM+</title>
@@ -235,36 +235,36 @@ A basic Emacs lisp script example is provided below to obtain the required growt
 </p>
 
 <div class="org-src-container">
-<pre class="src src-elisp">  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">setq</span> radius 4e-3<span style="color: #ffffff;">)</span>
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">setq</span> first-cell 0.00007649339528760109<span style="color: #ffffff;">)</span>
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">setq</span> tol 1e-10<span style="color: #ffffff;">)</span>
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">setq</span> cells 15<span style="color: #ffffff;">)</span>
+<pre class="src src-elisp">  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">setq</span> radius 4e-3<span style="color: #000000;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">setq</span> first-cell 0.00007649339528760109<span style="color: #000000;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">setq</span> tol 1e-10<span style="color: #000000;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">setq</span> cells 15<span style="color: #000000;">)</span>
 
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">defun</span> <span style="color: #f78fe7;">fr</span> <span style="color: #ff66ff;">(</span>r<span style="color: #ff66ff;">)</span>
-    <span style="color: #ff66ff;">(</span>-
-     <span style="color: #00eff0;">(</span>* radius <span style="color: #ff6b55;">(</span>- 1 r<span style="color: #ff6b55;">)</span><span style="color: #00eff0;">)</span>
-     <span style="color: #00eff0;">(</span>* first-cell
-        <span style="color: #ff6b55;">(</span>- 1 <span style="color: #efef00;">(</span>expt r cells<span style="color: #efef00;">)</span><span style="color: #ff6b55;">)</span><span style="color: #00eff0;">)</span><span style="color: #ff66ff;">)</span><span style="color: #ffffff;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">defun</span> <span style="color: #721045;">fr</span> <span style="color: #dd22dd;">(</span>r<span style="color: #dd22dd;">)</span>
+    <span style="color: #dd22dd;">(</span>-
+     <span style="color: #008899;">(</span>* radius <span style="color: #972500;">(</span>- 1 r<span style="color: #972500;">)</span><span style="color: #008899;">)</span>
+     <span style="color: #008899;">(</span>* first-cell
+        <span style="color: #972500;">(</span>- 1 <span style="color: #808000;">(</span>expt r cells<span style="color: #808000;">)</span><span style="color: #972500;">)</span><span style="color: #008899;">)</span><span style="color: #dd22dd;">)</span><span style="color: #000000;">)</span>
 
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">defun</span> <span style="color: #f78fe7;">frprime</span> <span style="color: #ff66ff;">(</span>r<span style="color: #ff66ff;">)</span>
-    <span style="color: #ff66ff;">(</span>-
-     <span style="color: #00eff0;">(</span>* first-cell cells <span style="color: #ff6b55;">(</span>expt r <span style="color: #efef00;">(</span>- cells 1<span style="color: #efef00;">)</span><span style="color: #ff6b55;">)</span><span style="color: #00eff0;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">defun</span> <span style="color: #721045;">frprime</span> <span style="color: #dd22dd;">(</span>r<span style="color: #dd22dd;">)</span>
+    <span style="color: #dd22dd;">(</span>-
+     <span style="color: #008899;">(</span>* first-cell cells <span style="color: #972500;">(</span>expt r <span style="color: #808000;">(</span>- cells 1<span style="color: #808000;">)</span><span style="color: #972500;">)</span><span style="color: #008899;">)</span>
      radius
-     <span style="color: #ff66ff;">)</span><span style="color: #ffffff;">)</span>
+     <span style="color: #dd22dd;">)</span><span style="color: #000000;">)</span>
 
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">defun</span> <span style="color: #f78fe7;">newton-next</span> <span style="color: #ff66ff;">(</span>x fun deriv<span style="color: #ff66ff;">)</span>
-    <span style="color: #ff66ff;">(</span>-
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">defun</span> <span style="color: #721045;">newton-next</span> <span style="color: #dd22dd;">(</span>x fun deriv<span style="color: #dd22dd;">)</span>
+    <span style="color: #dd22dd;">(</span>-
      x
-     <span style="color: #00eff0;">(</span>/
-      <span style="color: #ff6b55;">(</span>funcall fun x<span style="color: #ff6b55;">)</span>
-      <span style="color: #ff6b55;">(</span>funcall deriv x<span style="color: #ff6b55;">)</span><span style="color: #00eff0;">)</span><span style="color: #ff66ff;">)</span><span style="color: #ffffff;">)</span>
+     <span style="color: #008899;">(</span>/
+      <span style="color: #972500;">(</span>funcall fun x<span style="color: #972500;">)</span>
+      <span style="color: #972500;">(</span>funcall deriv x<span style="color: #972500;">)</span><span style="color: #008899;">)</span><span style="color: #dd22dd;">)</span><span style="color: #000000;">)</span>
 
-  <span style="color: #ffffff;">(</span><span style="color: #79a8ff; font-weight: bold;">defun</span> <span style="color: #f78fe7;">newton-run</span> <span style="color: #ff66ff;">(</span>x fun deriv tolerance<span style="color: #ff66ff;">)</span>
-      <span style="color: #ff66ff;">(</span><span style="color: #79a8ff; font-weight: bold;">while</span> <span style="color: #00eff0;">(</span>&gt; <span style="color: #ff6b55;">(</span>abs <span style="color: #efef00;">(</span>funcall fun x<span style="color: #efef00;">)</span><span style="color: #ff6b55;">)</span> tolerance<span style="color: #00eff0;">)</span>
-        <span style="color: #00eff0;">(</span><span style="color: #79a8ff; font-weight: bold;">setq</span> x <span style="color: #ff6b55;">(</span>newton-next x fun deriv<span style="color: #ff6b55;">)</span><span style="color: #00eff0;">)</span><span style="color: #ff66ff;">)</span>
-    x<span style="color: #ffffff;">)</span>
+  <span style="color: #000000;">(</span><span style="color: #531ab6; font-weight: bold;">defun</span> <span style="color: #721045;">newton-run</span> <span style="color: #dd22dd;">(</span>x fun deriv tolerance<span style="color: #dd22dd;">)</span>
+      <span style="color: #dd22dd;">(</span><span style="color: #531ab6; font-weight: bold;">while</span> <span style="color: #008899;">(</span>&gt; <span style="color: #972500;">(</span>abs <span style="color: #808000;">(</span>funcall fun x<span style="color: #808000;">)</span><span style="color: #972500;">)</span> tolerance<span style="color: #008899;">)</span>
+        <span style="color: #008899;">(</span><span style="color: #531ab6; font-weight: bold;">setq</span> x <span style="color: #972500;">(</span>newton-next x fun deriv<span style="color: #972500;">)</span><span style="color: #008899;">)</span><span style="color: #dd22dd;">)</span>
+    x<span style="color: #000000;">)</span>
 
-<span style="color: #ffffff;">(</span>newton-run 2 'fr 'frprime tol<span style="color: #ffffff;">)</span>
+<span style="color: #000000;">(</span>newton-run 2 'fr 'frprime tol<span style="color: #000000;">)</span>
 
 </pre>
 </div>
@@ -273,7 +273,7 @@ A basic Emacs lisp script example is provided below to obtain the required growt
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
-<p class="date">Created: 2025-11-22 Sat 16:10</p>
+<p class="date">Created: 2025-11-22 Sat 16:16</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

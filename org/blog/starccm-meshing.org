@@ -24,7 +24,7 @@ The following presents the meshing approach for a circular pipe using a 2D axisy
 
 A basic Emacs lisp script example is provided below to obtain the required growth rate for a specified number of cells.
 
-#+begin_src elisp
+#+begin_src elisp :var css-file="../style.css"
     (setq radius 4e-3)
     (setq first-cell 0.00007649339528760109)
     (setq tol 1e-10)
