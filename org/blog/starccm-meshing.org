@@ -1,0 +1,59 @@
+#+title: Structured meshing in STAR-CCM+
+#+options: toc:nil num:nil
+
+[[[../index.org][return]]]
+
+* The problem
+
+The RPI model implementation in STAR-CCM+ doesn't allow for the liquid temperature at a fixed y+ to be used as the liquid temperature. The consequence is that it is impossible to follow the usual mesh independence procedure, as the results are [[https://doi.org/10.1016/j.applthermaleng.2024.122678][the results are dependent on the thickness of the near-wall cell]]. Mesh independence can only be shown for the bulk region, and therefore a structured meshing approach which allows the near-wall cell to remain the same size is needed. Commercial software is not generally well suited to structured meshing applications, and STAR-CCM+ is no exception. Using prism layers proves to be highly unreliable in this case, with their thicknesses varying sufficiently to disturb the calculation even with the utmost care on the part of the engineer. The real solution proves to be far more convoluted.
+
+* The solution
+The following presents the meshing approach for a circular pipe using a 2D axisymmetric mesh. It assumes basic familiarity with STAR-CCM+ usage.
+
+1. Create parts for the pipe and wall cell layer using an extrude.
+2. Perform an imprint operation, selecting the CAD imprint option.
+3. Perform a badge for 2D meshing operation.
+4. Create a directed mesh operation, setting the source and target.
+5. Create a quadrilateral automated mesh.
+6. Set the base size of the mesh equal to the channel radius.
+7. Set the target and minimum sizes at 100% relative to the base size.
+8. Select user specified growth rate.
+9. Create a custom volumetric control. Enable customise size on surface remesher, and set it to the wall cell layer thickness. Don't forget to select the input part.
+10. Right click > edit on the quadrilateral mesh, disable proximity and curvature refinement for good measure.
+11. Control the radial cell count using the surface growth rate.
+
+A basic Emacs lisp script example is provided below to obtain the required growth rate for a specified number of cells.
+
+#+begin_src elisp
+    (setq radius 4e-3)
+    (setq first-cell 0.00007649339528760109)
+    (setq tol 1e-10)
+    (setq cells 15)
+
+    (defun fr (r)
+      (-
+    	 (* radius (- 1 r))
+    	 (* first-cell
+    			(- 1 (expt r cells)))))
+
+    (defun frprime (r)
+      (-
+    	 (* first-cell cells (expt r (- cells 1)))
+    	 radius
+    	 ))
+
+    (defun newton-next (x fun deriv)
+      (-
+       x
+       (/
+        (funcall fun x)
+        (funcall deriv x))))
+
+    (defun newton-run (x fun deriv tolerance)
+        (while (> (abs (funcall fun x)) tolerance)
+  				(setq x (newton-next x fun deriv)))
+      x)
+
+  (newton-run 2 'fr 'frprime tol)
+
+#+end_src
