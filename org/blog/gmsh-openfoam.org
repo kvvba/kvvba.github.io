@@ -21,7 +21,7 @@ There is, however, a catch. There is a little work we must do between generating
 
 * Mesh generation
 The script we need is very short:
-#+begin_src bash
+#+begin_src bash :var css-file="../style.css"
   #!/bin/bash
   rm -r constant/polyMesh/ constant/*/polyMesh
   gmsh my_mesh.geo -3
@@ -62,7 +62,7 @@ The ~gmshToFoam~ command leaves behind some thing we don't want, which can cause
 * Using ~changeDictionary~
 As mentioned in the previous section, ~gmshToFoam~ will assume every boundary is a patch. To save ourselves manually editing our ~polyMesh~ every time we generate a mesh, we can use ~changeDictionary~. This requires us to specify what to change in ~system/changeDictionaryDict~, which will look something like this:
 
-#+begin_src C++
+#+begin_src C++ :var css-file="../style.css"
 //  =========                 |  -*- OpenFOAM -*-
 //  \\      /  F ield         |
 //   \\    /   O peration     |

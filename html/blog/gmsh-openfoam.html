@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2025-11-22 Sat 16:10 -->
+<!-- 2025-11-22 Sat 16:19 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mesh generation with Gmsh for OpenFOAM</title>
@@ -239,7 +239,7 @@ There is, however, a catch. There is a little work we must do between generating
 The script we need is very short:
 </p>
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #ef8386; font-style: italic;">#</span><span style="color: #ef8386; font-style: italic;">!/bin/</span><span style="color: #79a8ff; font-weight: bold;">bash</span><span style="color: #ef8386; font-style: italic;">
+<pre class="src src-bash"><span style="color: #595959; font-style: italic;">#</span><span style="color: #595959; font-style: italic;">!/bin/</span><span style="color: #531ab6; font-weight: bold;">bash</span><span style="color: #595959; font-style: italic;">
 </span>rm -r constant/polyMesh/ constant/*/polyMesh
 gmsh my_mesh.geo -3
 gmshToFoam my_mesh.msh
@@ -303,55 +303,55 @@ As mentioned in the previous section, <code>gmshToFoam</code> will assume every 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-C++"><span style="color: #ef8386; font-style: italic;">//  </span><span style="color: #ef8386; font-style: italic;">=========                 |  -*- OpenFOAM -*-
-</span><span style="color: #ef8386; font-style: italic;">//  </span><span style="color: #ef8386; font-style: italic;">\\      /  F ield         |
-</span><span style="color: #ef8386; font-style: italic;">//   </span><span style="color: #ef8386; font-style: italic;">\\    /   O peration     |
-</span><span style="color: #ef8386; font-style: italic;">//    </span><span style="color: #ef8386; font-style: italic;">\\  /    A nd           |
-</span><span style="color: #ef8386; font-style: italic;">//     </span><span style="color: #ef8386; font-style: italic;">\\/     M anipulation  |
-</span><span style="color: #ef8386; font-style: italic;">//</span><span style="color: #ef8386; font-style: italic;">
-</span><span style="color: #ef8386; font-style: italic;">// </span><span style="color: #ef8386; font-style: italic;">Copyright (C) 2023 jakub
-</span><span style="color: #ef8386; font-style: italic;">//</span><span style="color: #ef8386; font-style: italic;">
-</span><span style="color: #ef8386; font-style: italic;">// </span><span style="color: #ef8386; font-style: italic;">Author: jakub
+<pre class="src src-C++"><span style="color: #595959; font-style: italic;">//  </span><span style="color: #595959; font-style: italic;">=========                 |  -*- OpenFOAM -*-
+</span><span style="color: #595959; font-style: italic;">//  </span><span style="color: #595959; font-style: italic;">\\      /  F ield         |
+</span><span style="color: #595959; font-style: italic;">//   </span><span style="color: #595959; font-style: italic;">\\    /   O peration     |
+</span><span style="color: #595959; font-style: italic;">//    </span><span style="color: #595959; font-style: italic;">\\  /    A nd           |
+</span><span style="color: #595959; font-style: italic;">//     </span><span style="color: #595959; font-style: italic;">\\/     M anipulation  |
+</span><span style="color: #595959; font-style: italic;">//</span><span style="color: #595959; font-style: italic;">
+</span><span style="color: #595959; font-style: italic;">// </span><span style="color: #595959; font-style: italic;">Copyright (C) 2023 jakub
+</span><span style="color: #595959; font-style: italic;">//</span><span style="color: #595959; font-style: italic;">
+</span><span style="color: #595959; font-style: italic;">// </span><span style="color: #595959; font-style: italic;">Author: jakub
 </span>
-<span style="color: #ef8386; font-style: italic;">/// </span><span style="color: #ef8386; font-style: italic;">Code:
+<span style="color: #595959; font-style: italic;">/// </span><span style="color: #595959; font-style: italic;">Code:
 </span>
 FoamFile
-<span style="color: #ffffff;">{</span>
+<span style="color: #000000;">{</span>
     version 2.0;
-    <span style="color: #11c777; font-weight: bold;">format</span> <span style="color: #4ae2f0;">ascii</span>;
-    <span style="color: #79a8ff; font-weight: bold;">class</span> <span style="color: #11c777; font-weight: bold;">dictionary</span>;
-    <span style="color: #11c777; font-weight: bold;">object</span> <span style="color: #4ae2f0;">changeDictionaryDict</span>;
-<span style="color: #ffffff;">}</span>
+    <span style="color: #005f5f; font-weight: bold;">format</span> <span style="color: #005e8b;">ascii</span>;
+    <span style="color: #531ab6; font-weight: bold;">class</span> <span style="color: #005f5f; font-weight: bold;">dictionary</span>;
+    <span style="color: #005f5f; font-weight: bold;">object</span> <span style="color: #005e8b;">changeDictionaryDict</span>;
+<span style="color: #000000;">}</span>
 
 boundary
-<span style="color: #ffffff;">{</span>
+<span style="color: #000000;">{</span>
     upstream
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">patch</span>;
-    <span style="color: #ff66ff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">patch</span>;
+    <span style="color: #dd22dd;">}</span>
     downstream
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">patch</span>;
-    <span style="color: #ff66ff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">patch</span>;
+    <span style="color: #dd22dd;">}</span>
     top
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
-    <span style="color: #ff66ff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">wall</span>;
+    <span style="color: #dd22dd;">}</span>
     bottom
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
-    <span style="color: #ff66ff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">wall</span>;
+    <span style="color: #dd22dd;">}</span>
     front
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">symmetryPlane</span>;
-    <span style="color: #ff66ff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">symmetryPlane</span>;
+    <span style="color: #dd22dd;">}</span>
     back
-    <span style="color: #ff66ff;">{</span>
-        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
-    <span style="color: #ff66ff;">}</span>
-<span style="color: #ffffff;">}</span>
+    <span style="color: #dd22dd;">{</span>
+        <span style="color: #005f5f; font-weight: bold;">type</span> <span style="color: #005e8b;">wall</span>;
+    <span style="color: #dd22dd;">}</span>
+<span style="color: #000000;">}</span>
 
-<span style="color: #ef8386; font-style: italic;">/// </span><span style="color: #ef8386; font-style: italic;">changeDictionaryDict ends here</span>
+<span style="color: #595959; font-style: italic;">/// </span><span style="color: #595959; font-style: italic;">changeDictionaryDict ends here</span>
 </pre>
 </div>
 
@@ -386,7 +386,7 @@ Here we have 6 boundaries: <code>upstream, downstream, top, bottom, front, back<
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
-<p class="date">Created: 2025-11-22 Sat 16:10</p>
+<p class="date">Created: 2025-11-22 Sat 16:19</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
