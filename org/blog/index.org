@@ -1,4 +1,5 @@
 #+TITLE: Blog posts
 
+- {{{timestamp(2025-11-22)}}} [[file:starccm-meshing.org][Structured meshing in STAR-CCM+]]
 - {{{timestamp(2024-05-07)}}} [[file:gmsh-openfoam.org][Mesh generation with Gmsh for OpenFOAM]]
 - {{{timestamp(2024-05-07)}}} [[file:force-value.org][Forcing known values at internal cells]]
