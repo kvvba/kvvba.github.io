@@ -1,7 +1,6 @@
 #+title: kvvba.github.io
 #+options: toc:nil num:nil
-* About
-I love thermal hydraulics and direct numerical simulation.
+#+html_head: <link rel="stylesheet" type="text/css" href="style.css"/>
 * Posts
 #+HTML: <div class="blog-entries">
 #+INCLUDE: "blog/index.org" :lines "3-"

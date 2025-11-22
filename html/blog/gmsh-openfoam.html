@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-05-07 Tue 20:22 -->
+<!-- 2025-11-22 Sat 16:10 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mesh generation with Gmsh for OpenFOAM</title>
@@ -193,6 +193,7 @@
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   .org-svg { }
 </style>
+<link rel="stylesheet" type="text/css" href="../style.css"/>
 </head>
 <body>
 <div id="content" class="content">
@@ -238,8 +239,8 @@ There is, however, a catch. There is a little work we must do between generating
 The script we need is very short:
 </p>
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #505050;">#</span><span style="color: #505050;">!/bin/</span><span style="color: #5317ac;">bash</span>
-rm -r constant/polyMesh/ constant/*/polyMesh
+<pre class="src src-bash"><span style="color: #ef8386; font-style: italic;">#</span><span style="color: #ef8386; font-style: italic;">!/bin/</span><span style="color: #79a8ff; font-weight: bold;">bash</span><span style="color: #ef8386; font-style: italic;">
+</span>rm -r constant/polyMesh/ constant/*/polyMesh
 gmsh my_mesh.geo -3
 gmshToFoam my_mesh.msh
 changeDictionary
@@ -302,55 +303,55 @@ As mentioned in the previous section, <code>gmshToFoam</code> will assume every 
 </p>
 
 <div class="org-src-container">
-<pre class="src src-C++"><span style="color: #505050;">//  </span><span style="color: #505050;">=========                 |  -*- OpenFOAM -*-</span>
-<span style="color: #505050;">//  </span><span style="color: #505050;">\\      /  F ield         |</span>
-<span style="color: #505050;">//   </span><span style="color: #505050;">\\    /   O peration     |</span>
-<span style="color: #505050;">//    </span><span style="color: #505050;">\\  /    A nd           |</span>
-<span style="color: #505050;">//     </span><span style="color: #505050;">\\/     M anipulation  |</span>
-<span style="color: #505050;">//</span>
-<span style="color: #505050;">// </span><span style="color: #505050;">Copyright (C) 2023 jakub</span>
-<span style="color: #505050;">//</span>
-<span style="color: #505050;">// </span><span style="color: #505050;">Author: jakub</span>
-
-<span style="color: #505050;">/// </span><span style="color: #505050;">Code:</span>
-
+<pre class="src src-C++"><span style="color: #ef8386; font-style: italic;">//  </span><span style="color: #ef8386; font-style: italic;">=========                 |  -*- OpenFOAM -*-
+</span><span style="color: #ef8386; font-style: italic;">//  </span><span style="color: #ef8386; font-style: italic;">\\      /  F ield         |
+</span><span style="color: #ef8386; font-style: italic;">//   </span><span style="color: #ef8386; font-style: italic;">\\    /   O peration     |
+</span><span style="color: #ef8386; font-style: italic;">//    </span><span style="color: #ef8386; font-style: italic;">\\  /    A nd           |
+</span><span style="color: #ef8386; font-style: italic;">//     </span><span style="color: #ef8386; font-style: italic;">\\/     M anipulation  |
+</span><span style="color: #ef8386; font-style: italic;">//</span><span style="color: #ef8386; font-style: italic;">
+</span><span style="color: #ef8386; font-style: italic;">// </span><span style="color: #ef8386; font-style: italic;">Copyright (C) 2023 jakub
+</span><span style="color: #ef8386; font-style: italic;">//</span><span style="color: #ef8386; font-style: italic;">
+</span><span style="color: #ef8386; font-style: italic;">// </span><span style="color: #ef8386; font-style: italic;">Author: jakub
+</span>
+<span style="color: #ef8386; font-style: italic;">/// </span><span style="color: #ef8386; font-style: italic;">Code:
+</span>
 FoamFile
-<span style="color: #000000;">{</span>
+<span style="color: #ffffff;">{</span>
     version 2.0;
-    <span style="color: #005a5f;">format</span> <span style="color: #00538b;">ascii</span>;
-    <span style="color: #5317ac;">class</span> <span style="color: #005a5f;">dictionary</span>;
-    <span style="color: #005a5f;">object</span> <span style="color: #00538b;">changeDictionaryDict</span>;
-<span style="color: #000000;">}</span>
+    <span style="color: #11c777; font-weight: bold;">format</span> <span style="color: #4ae2f0;">ascii</span>;
+    <span style="color: #79a8ff; font-weight: bold;">class</span> <span style="color: #11c777; font-weight: bold;">dictionary</span>;
+    <span style="color: #11c777; font-weight: bold;">object</span> <span style="color: #4ae2f0;">changeDictionaryDict</span>;
+<span style="color: #ffffff;">}</span>
 
 boundary
-<span style="color: #000000;">{</span>
+<span style="color: #ffffff;">{</span>
     upstream
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">patch</span>;
-    <span style="color: #a8007f;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">patch</span>;
+    <span style="color: #ff66ff;">}</span>
     downstream
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">patch</span>;
-    <span style="color: #a8007f;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">patch</span>;
+    <span style="color: #ff66ff;">}</span>
     top
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">wall</span>;
-    <span style="color: #a8007f;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
+    <span style="color: #ff66ff;">}</span>
     bottom
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">wall</span>;
-    <span style="color: #a8007f;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
+    <span style="color: #ff66ff;">}</span>
     front
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">symmetryPlane</span>;
-    <span style="color: #a8007f;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">symmetryPlane</span>;
+    <span style="color: #ff66ff;">}</span>
     back
-    <span style="color: #a8007f;">{</span>
-        <span style="color: #005a5f;">type</span> <span style="color: #00538b;">wall</span>;
-    <span style="color: #a8007f;">}</span>
-<span style="color: #000000;">}</span>
+    <span style="color: #ff66ff;">{</span>
+        <span style="color: #11c777; font-weight: bold;">type</span> <span style="color: #4ae2f0;">wall</span>;
+    <span style="color: #ff66ff;">}</span>
+<span style="color: #ffffff;">}</span>
 
-<span style="color: #505050;">/// </span><span style="color: #505050;">changeDictionaryDict ends here</span>
+<span style="color: #ef8386; font-style: italic;">/// </span><span style="color: #ef8386; font-style: italic;">changeDictionaryDict ends here</span>
 </pre>
 </div>
 
@@ -385,7 +386,7 @@ Here we have 6 boundaries: <code>upstream, downstream, top, bottom, front, back<
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: jakub</p>
-<p class="date">Created: 2024-05-07 Tue 20:22</p>
+<p class="date">Created: 2025-11-22 Sat 16:10</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

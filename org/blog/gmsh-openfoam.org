@@ -1,6 +1,6 @@
 #+title: Mesh generation with Gmsh for OpenFOAM
 #+options: toc:nil num:nil
-
+#+html_head: <link rel="stylesheet" type="text/css" href="../style.css"/>
 [[[../index.org][return]]]
 
 * Motivation
